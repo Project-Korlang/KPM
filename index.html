@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPM Registry</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.6; background: #f9f9f9; color: #333; }
+        header { border-bottom: 2px solid #333; padding-bottom: 1rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
+        h1 { margin: 0; font-size: 2rem; }
+        .badge { background: #333; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; }
+        .search-box { width: 100%; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1.2rem; margin-bottom: 2rem; }
+        .pkg-list { list-style: none; padding: 0; }
+        .pkg-item { background: white; border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; transition: transform 0.2s; }
+        .pkg-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .pkg-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+        .pkg-name { font-weight: bold; font-size: 1.2rem; color: #2c3e50; text-decoration: none; }
+        .pkg-desc { color: #666; margin: 0; }
+        .pkg-meta { font-size: 0.9rem; color: #999; margin-top: 1rem; }
+        code { background: #eee; padding: 0.2rem 0.4rem; border-radius: 3px; }
+        footer { margin-top: 4rem; text-align: center; color: #999; font-size: 0.9rem; }
+        a { color: #007bff; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>KPM Registry</h1>
+        <span class="badge">v1.0.0</span>
+    </header>
+
+    <input type="text" class="search-box" placeholder="Search packages..." id="search">
+
+    <div id="stats" style="margin-bottom: 2rem; color: #666;">
+        Loading registry statistics...
+    </div>
+
+    <ul class="pkg-list" id="pkg-list">
+        <!-- Packages will be loaded here via JS -->
+    </ul>
+
+    <footer>
+        <p>Hosted on GitHub Pages | <a href="https://github.com/Project-Korlang/KPM">View Source</a></p>
+    </footer>
+
+    <script>
+        async function loadRegistry() {
+            try {
+                const response = await fetch("index.json");
+                const data = await response.json();
+                const packages = data.packages;
+                
+                const list = document.getElementById("pkg-list");
+                const stats = document.getElementById("stats");
+                const keys = Object.keys(packages);
+                
+                stats.textContent = `${keys.length} packages indexed.`;
+
+                if (keys.length === 0) {
+                    list.innerHTML = "<li class=\"pkg-item\" style=\"text-align:center; color:#999;\">No packages found yet. Be the first to publish!</li>";
+                    return;
+                }
+
+                keys.forEach(key => {
+                    const pkg = packages[key];
+                    const li = document.createElement("li");
+                    li.className = "pkg-item";
+                    li.innerHTML = `
+                        <div class="pkg-header">
+                            <a href="#" class="pkg-name">${key}</a>
+                            <span class="badge">${pkg.latest || "0.0.1"}</span>
+                        </div>
+                        <p class="pkg-desc">${pkg.description || "No description provided."}</p>
+                        <div class="pkg-meta">
+                            by ${pkg.author || "Unknown"} • <span style="font-family:monospace">kpm install ${key}</span>
+                        </div>
+                    `;
+                    list.appendChild(li);
+                });
+            } catch (e) {
+                console.error(e);
+                document.getElementById("stats").textContent = "Failed to load registry index.";
+            }
+        }
+        loadRegistry();
+    </script>
+</body>
+</html>
