@@ -1,87 +1,177 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KPM Registry</title>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>KPM | Korlang Package Registry</title>
+    <link href='https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;600;800&display=swap' rel='stylesheet'>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.6; background: #f9f9f9; color: #333; }
-        header { border-bottom: 2px solid #333; padding-bottom: 1rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
-        h1 { margin: 0; font-size: 2rem; }
-        .badge { background: #333; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; }
-        .search-box { width: 100%; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1.2rem; margin-bottom: 2rem; }
-        .pkg-list { list-style: none; padding: 0; }
-        .pkg-item { background: white; border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; transition: transform 0.2s; }
-        .pkg-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .pkg-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
-        .pkg-name { font-weight: bold; font-size: 1.2rem; color: #2c3e50; text-decoration: none; }
-        .pkg-desc { color: #666; margin: 0; }
-        .pkg-meta { font-size: 0.9rem; color: #999; margin-top: 1rem; }
-        code { background: #eee; padding: 0.2rem 0.4rem; border-radius: 3px; }
-        footer { margin-top: 4rem; text-align: center; color: #999; font-size: 0.9rem; }
-        a { color: #007bff; text-decoration: none; }
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #38bdf8;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: #334155;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            line-height: 1.5;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+        .logo {
+            font-weight: 800;
+            font-size: 1.8rem;
+            letter-spacing: -1px;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .search-container {
+            position: relative;
+            margin-bottom: 3rem;
+        }
+        #search {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            color: white;
+            font-size: 1.1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        #search:focus { border-color: var(--accent); }
+        .stats-bar {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+        .pkg-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .pkg-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .pkg-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+        .pkg-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--accent);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .pkg-desc {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            height: 3rem;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            margin-bottom: 1.5rem;
+        }
+        .pkg-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+        .install-cmd {
+            font-family: 'Fira Code', monospace;
+            background: #000;
+            padding: 0.4rem 0.6rem;
+            border-radius: 6px;
+            color: #10b981;
+        }
+        .empty-state {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 5rem;
+            color: var(--text-dim);
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>KPM Registry</h1>
-        <span class="badge">v1.0.0</span>
+        <div class='logo'>KPM REGISTRY</div>
+        <nav>
+            <a href='https://github.com/Project-Korlang/KPM' style='color: var(--text-dim); text-decoration: none;'>Docs</a>
+        </nav>
     </header>
 
-    <input type="text" class="search-box" placeholder="Search packages..." id="search">
-
-    <div id="stats" style="margin-bottom: 2rem; color: #666;">
-        Loading registry statistics...
+    <div class='search-container'>
+        <input type='text' id='search' placeholder='Search 5000+ native packages...'>
     </div>
 
-    <ul class="pkg-list" id="pkg-list">
-        <!-- Packages will be loaded here via JS -->
-    </ul>
+    <div class='stats-bar' id='stats'>
+        Loading registry...
+    </div>
 
-    <footer>
-        <p>Hosted on GitHub Pages | <a href="https://github.com/Project-Korlang/KPM">View Source</a></p>
-    </footer>
+    <div class='pkg-grid' id='pkg-grid'>
+        <!-- Cards injected here -->
+    </div>
 
     <script>
-        async function loadRegistry() {
+        async function fetchRegistry() {
+            const grid = document.getElementById('pkg-grid');
+            const stats = document.getElementById('stats');
             try {
-                const response = await fetch("index.json");
-                const data = await response.json();
-                const packages = data.packages;
+                const res = await fetch('index.json');
+                const data = await res.json();
+                const pkgs = Object.entries(data.packages);
                 
-                const list = document.getElementById("pkg-list");
-                const stats = document.getElementById("stats");
-                const keys = Object.keys(packages);
-                
-                stats.textContent = `${keys.length} packages indexed.`;
+                stats.innerHTML = `<span>${pkgs.length} Packages</span> • <span>v1.0.0</span> • <span>Stable</span>`;
 
-                if (keys.length === 0) {
-                    list.innerHTML = "<li class=\"pkg-item\" style=\"text-align:center; color:#999;\">No packages found yet. Be the first to publish!</li>";
+                if (pkgs.length === 0) {
+                    grid.innerHTML = `<div class='empty-state'>
+                        <h3>The Registry is Ready</h3>
+                        <p>No packages found yet. Start the ecosystem by publishing the first library.</p>
+                        <code style='color: var(--accent)'>kpm publish</code>
+                    </div>`;
                     return;
                 }
 
-                keys.forEach(key => {
-                    const pkg = packages[key];
-                    const li = document.createElement("li");
-                    li.className = "pkg-item";
-                    li.innerHTML = `
-                        <div class="pkg-header">
-                            <a href="#" class="pkg-name">${key}</a>
-                            <span class="badge">${pkg.latest || "0.0.1"}</span>
+                grid.innerHTML = pkgs.map(([name, info]) => `
+                    <div class='pkg-card'>
+                        <a href='#' class='pkg-name'>${name}</a>
+                        <p class='pkg-desc'>${info.description || 'Native Korlang library for building high-performance systems.'}</p>
+                        <div class='pkg-footer'>
+                            <span class='install-cmd'>kpm add ${name}</span>
+                            <span style='color: var(--text-dim)'>v${info.version || '0.1.0'}</span>
                         </div>
-                        <p class="pkg-desc">${pkg.description || "No description provided."}</p>
-                        <div class="pkg-meta">
-                            by ${pkg.author || "Unknown"} • <span style="font-family:monospace">kpm install ${key}</span>
-                        </div>
-                    `;
-                    list.appendChild(li);
-                });
+                    </div>
+                `).join('');
             } catch (e) {
-                console.error(e);
-                document.getElementById("stats").textContent = "Failed to load registry index.";
+                stats.textContent = 'Error: Could not sync with registry.';
             }
         }
-        loadRegistry();
+        fetchRegistry();
     </script>
 </body>
 </html>
