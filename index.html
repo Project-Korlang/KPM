@@ -10,15 +10,18 @@
             --bg: #0f172a;
             --card-bg: #1e293b;
             --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.2);
             --text-main: #f8fafc;
             --text-dim: #94a3b8;
             --border: #334155;
+            --success: #10b981;
+            --error: #ef4444;
         }
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg);
             color: var(--text-main);
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 2rem;
             line-height: 1.5;
@@ -28,6 +31,13 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 3rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.5rem;
+        }
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
         .logo {
             font-weight: 800;
@@ -37,6 +47,26 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+        nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+        nav a:hover, nav a.active {
+            color: var(--accent);
+        }
+
+        /* Browse Section */
+        .section { display: none; }
+        .section.active { display: block; }
+
         .search-container {
             position: relative;
             margin-bottom: 3rem;
@@ -50,9 +80,12 @@
             color: white;
             font-size: 1.1rem;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-        #search:focus { border-color: var(--accent); }
+        #search:focus { 
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+        }
         .stats-bar {
             display: flex;
             gap: 2rem;
@@ -62,7 +95,7 @@
         }
         .pkg-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 1.5rem;
         }
         .pkg-card {
@@ -107,8 +140,83 @@
             background: #000;
             padding: 0.4rem 0.6rem;
             border-radius: 6px;
-            color: #10b981;
+            color: var(--success);
         }
+
+        /* Generator Section */
+        .gen-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        .form-group { margin-bottom: 1.5rem; }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+        input, textarea, select {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.8rem;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+        input:focus { border-color: var(--accent); }
+        .preview-pane {
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: sticky;
+            top: 2rem;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        pre {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--accent);
+            overflow-y: auto;
+            margin: 0;
+            flex-grow: 1;
+        }
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        button {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-primary { background: var(--accent); color: var(--bg); }
+        .btn-secondary { background: var(--border); color: white; }
+        button:hover { opacity: 0.9; }
+
+        .validation-tag {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+        .valid { background: var(--success); color: white; }
+        .invalid { background: var(--error); color: white; }
+
         .empty-state {
             text-align: center;
             grid-column: 1 / -1;
@@ -119,25 +227,95 @@
 </head>
 <body>
     <header>
-        <div class='logo'>KPM REGISTRY</div>
+        <div class='logo-group'>
+            <div class='logo'>KPM</div>
+            <div style="font-size: 0.8rem; color: var(--text-dim); background: var(--border); padding: 2px 6px; border-radius: 4px;">REGISTRY</div>
+        </div>
         <nav>
-            <a href='https://github.com/Project-Korlang/KPM' style='color: var(--text-dim); text-decoration: none;'>Docs</a>
+            <a id="nav-browse" class="active" onclick="showSection('browse')">Browse</a>
+            <a id="nav-create" onclick="showSection('create')">Manifest Generator</a>
+            <a href='https://github.com/Project-Korlang/KPM' target="_blank">Documentation</a>
         </nav>
     </header>
 
-    <div class='search-container'>
-        <input type='text' id='search' placeholder='Search 5000+ native packages...'>
+    <!-- Browse Section -->
+    <div id="section-browse" class="section active">
+        <div class='search-container'>
+            <input type='text' id='search' placeholder='Search native Korlang packages...'>
+        </div>
+        <div class='stats-bar' id='stats'>Syncing with registry...</div>
+        <div class='pkg-grid' id='pkg-grid'></div>
     </div>
 
-    <div class='stats-bar' id='stats'>
-        Loading registry...
-    </div>
+    <!-- Generator Section -->
+    <div id="section-create" class="section">
+        <h2 style="margin-top: 0;">Package Manifest Generator</h2>
+        <p style="color: var(--text-dim); margin-bottom: 2rem;">Fill out the form below to generate a valid <code>package.json</code> for the KPM registry.</p>
+        
+        <div class="gen-container">
+            <div class="editor-pane">
+                <div class="form-group">
+                    <label>Package Name (Identifier)</label>
+                    <input type="text" id="p-name" placeholder="e.g. my-awesome-lib" oninput="updateManifest()">
+                </div>
+                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label>Version</label>
+                        <input type="text" id="p-version" value="1.0.0" oninput="updateManifest()">
+                    </div>
+                    <div>
+                        <label>License</label>
+                        <select id="p-license" onchange="updateManifest()">
+                            <option value="MIT">MIT</option>
+                            <option value="Apache-2.0">Apache 2.0</option>
+                            <option value="GPL-3.0">GPL v3</option>
+                            <option value="BSD-3-Clause">BSD 3-Clause</option>
+                            <option value="Unlicense">Unlicense</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="p-desc" rows="3" placeholder="What does your package do?" oninput="updateManifest()"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Author</label>
+                    <input type="text" id="p-author" placeholder="Your Name <email@example.com>" oninput="updateManifest()">
+                </div>
+                <div class="form-group">
+                    <label>Repository URL</label>
+                    <input type="text" id="p-repo" placeholder="https://github.com/user/repo" oninput="updateManifest()">
+                </div>
+                <div class="form-group">
+                    <label>Keywords (Comma separated)</label>
+                    <input type="text" id="p-keywords" placeholder="ui, networking, graphics" oninput="updateManifest()">
+                </div>
+            </div>
 
-    <div class='pkg-grid' id='pkg-grid'>
-        <!-- Cards injected here -->
+            <div class="preview-pane">
+                <div class="preview-header">
+                    <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-dim);">PREVIEW: package.json</span>
+                    <span id="validation-status" class="validation-tag invalid">Invalid</span>
+                </div>
+                <pre id="json-preview"></pre>
+                <div class="btn-group">
+                    <button class="btn-primary" onclick="downloadManifest()">Download JSON</button>
+                    <button class="btn-secondary" onclick="copyToClipboard()">Copy to Clipboard</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
+        // Section Switching
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            document.getElementById('section-' + id).classList.add('active');
+            document.getElementById('nav-' + id).classList.add('active');
+        }
+
+        // Registry Fetching
         async function fetchRegistry() {
             const grid = document.getElementById('pkg-grid');
             const stats = document.getElementById('stats');
@@ -146,13 +324,12 @@
                 const data = await res.json();
                 const pkgs = Object.entries(data.packages);
                 
-                stats.innerHTML = `<span>${pkgs.length} Packages</span> • <span>v1.0.0</span> • <span>Stable</span>`;
+                stats.innerHTML = `<span>${pkgs.length} Packages</span> • <span>Registry v1.0</span> • <span>Global</span>`;
 
                 if (pkgs.length === 0) {
                     grid.innerHTML = `<div class='empty-state'>
-                        <h3>The Registry is Ready</h3>
-                        <p>No packages found yet. Start the ecosystem by publishing the first library.</p>
-                        <code style='color: var(--accent)'>kpm publish</code>
+                        <h3>The Registry is Empty</h3>
+                        <p>No packages found. Use the Manifest Generator to get started.</p>
                     </div>`;
                     return;
                 }
@@ -160,7 +337,7 @@
                 grid.innerHTML = pkgs.map(([name, info]) => `
                     <div class='pkg-card'>
                         <a href='#' class='pkg-name'>${name}</a>
-                        <p class='pkg-desc'>${info.description || 'Native Korlang library for building high-performance systems.'}</p>
+                        <p class='pkg-desc'>${info.description || 'Native Korlang library.'}</p>
                         <div class='pkg-footer'>
                             <span class='install-cmd'>kpm add ${name}</span>
                             <span style='color: var(--text-dim)'>v${info.version || '0.1.0'}</span>
@@ -168,10 +345,65 @@
                     </div>
                 `).join('');
             } catch (e) {
-                stats.textContent = 'Error: Could not sync with registry.';
+                stats.textContent = 'Unable to load registry index.';
             }
         }
+
+        // Manifest Generation Logic
+        function updateManifest() {
+            const name = document.getElementById('p-name').value;
+            const version = document.getElementById('p-version').value;
+            const desc = document.getElementById('p-desc').value;
+            const author = document.getElementById('p-author').value;
+            const repo = document.getElementById('p-repo').value;
+            const license = document.getElementById('p-license').value;
+            const keywords = document.getElementById('p-keywords').value.split(',').map(k => k.trim()).filter(k => k);
+
+            const manifest = {
+                name: name || "placeholder-name",
+                version: version || "1.0.0",
+                description: desc || "",
+                author: author || "",
+                repository: repo || "",
+                license: license || "MIT",
+                keywords: keywords
+            };
+
+            const jsonStr = JSON.stringify(manifest, null, 4);
+            document.getElementById('json-preview').textContent = jsonStr;
+
+            // Simple Validation
+            const status = document.getElementById('validation-status');
+            const isValid = name.length > 2 && version.match(/^\d+\.\d+\.\d+$/) && repo.startsWith('http');
+            
+            if (isValid) {
+                status.textContent = "Valid KPM Manifest";
+                status.className = "validation-tag valid";
+            } else {
+                status.textContent = "Missing Required Fields";
+                status.className = "validation-tag invalid";
+            }
+        }
+
+        function downloadManifest() {
+            const json = document.getElementById('json-preview').textContent;
+            const blob = new Blob([json], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'package.json';
+            a.click();
+        }
+
+        function copyToClipboard() {
+            const json = document.getElementById('json-preview').textContent;
+            navigator.clipboard.writeText(json);
+            alert("Copied to clipboard!");
+        }
+
+        // Init
         fetchRegistry();
+        updateManifest();
     </script>
 </body>
 </html>
