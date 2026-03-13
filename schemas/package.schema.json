@@ -1,0 +1,169 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Korlang Package Manifest",
+  "type": "object",
+  "required": [
+    "name",
+    "version",
+    "description",
+    "authors",
+    "license",
+    "repository",
+    "keywords",
+    "categories",
+    "dependencies",
+    "dev_dependencies",
+    "korlang_version",
+    "entry_point",
+    "checksum",
+    "download_url",
+    "published_at"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
+      "minLength": 3,
+      "maxLength": 50,
+      "description": "Package name (lowercase, alphanumeric + hyphens)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$",
+      "description": "SemVer 2.0.0 compliant version string"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 200,
+      "description": "Short description of the package"
+    },
+    "authors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "description": "List of author handles or names"
+    },
+    "license": {
+      "type": "string",
+      "description": "SPDX license identifier (e.g. MIT, Apache-2.0)"
+    },
+    "repository": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to the source code repository"
+    },
+    "homepage": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to the project homepage (optional)"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 20
+      },
+      "maxItems": 10,
+      "description": "Keywords for search"
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "cli",
+          "web",
+          "system",
+          "data",
+          "network",
+          "graphics",
+          "math",
+          "text",
+          "parser",
+          "dev-tool",
+          "game",
+          "audio",
+          "video",
+          "security",
+          "embedded",
+          "science",
+          "testing",
+          "database",
+          "gui",
+          "mobile",
+          "other"
+        ]
+      },
+      "maxItems": 3,
+      "description": "Categories for browsing"
+    },
+    "dependencies": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z0-9-]+$": {
+          "type": "string"
+        }
+      },
+      "description": "Runtime dependencies"
+    },
+    "dev_dependencies": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z0-9-]+$": {
+          "type": "string"
+        }
+      },
+      "description": "Development dependencies"
+    },
+    "korlang_version": {
+      "type": "string",
+      "description": "Required Korlang compiler version range"
+    },
+    "entry_point": {
+      "type": "string",
+      "description": "Path to the main library file (e.g. src/lib.kor)"
+    },
+    "checksum": {
+      "type": "object",
+      "required": ["sha256"],
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "signature": {
+            "type": "string",
+            "description": "GPG or Ed25519 signature of the tarball (optional but recommended)"
+        }
+      }
+    },
+    "download_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Direct download URL for the package tarball (.tar.gz, .zip)"
+    },
+    "published_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of publication"
+    },
+    "readme_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Raw URL to the README.md file"
+    },
+    "documentation_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to the documentation site"
+    },
+    "deprecated": {
+        "type": "boolean",
+        "default": false,
+        "description": "Whether this package version is deprecated"
+    }
+  }
+}

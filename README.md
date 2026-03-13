@@ -1,50 +1,54 @@
-# 📦 KPM Registry: The Korlang Package Ecosystem
+# Korlang Package Registry (KPM)
 
-[![Registry Status](https://img.shields.io/badge/Registry-Online-success)](https://project-korlang.github.io/KPM/)
-[![Korlang Version](https://img.shields.io/badge/Korlang-1.0--alpha-blue)](https://github.com/Project-Korlang/Korlang-Compiler)
+The official package registry for the Korlang programming language.
 
-The official decentralized registry for **Korlang** packages. KPM (Korlang Package Manager) uses this repository as its primary source of truth for discovering, verifying, and downloading native Korlang libraries.
+[![Website](https://img.shields.io/badge/website-korlang.org-blue)](https://korlang.github.io/registry)
+[![Packages](https://img.shields.io/badge/packages-dynamic-orange)](index.json)
 
----
+## How it Works
+KPM is a **decentralized, static registry**. 
+- **Index:** `index.json` contains a lightweight list of all packages.
+- **Manifests:** `packages/*.json` contain full metadata for specific packages.
+- **Hosting:** Hosted entirely on GitHub Pages / CDN.
 
-## 🚀 Quick Start
+## Usage
 
-### 1. Register the Registry
-Add the official registry to your local KPM configuration:
-\`\`\`bash
-korlang kpm registry add official https://project-korlang.github.io/KPM/
-\`\`\`
-
-### 2. Install a Package
-\`\`\`bash
+### Install a Package
+```bash
 kpm install <package-name>
-\`\`\`
+```
 
-### 3. Initialize a Project
-\`\`\`bash
-korlang new my-project
-\`\`\`
+### Browse Packages
+Visit the [Web UI](https://korlang.github.io/registry) to search and explore libraries.
 
----
+## For Package Authors
+Want to publish a library?
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the submission guide.
 
-## 🛠️ For Developers
+## Development
 
-### Registry Structure
-- \`packages/\`: Contains individual JSON manifests for every registered package.
-- \`authors/\`: Metadata for verified package maintainers.
-- \`index.json\`: The compressed master index used for fast CLI discovery.
+To run the registry tooling locally:
 
-### Submitting a Package
-1. **Fork** this repository.
-2. Add your package manifest to \`packages/<your-package>.json\`.
-3. Ensure your source code is hosted on a supported platform (GitHub/GitLab).
-4. Open a **Pull Request**.
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
----
+2. Validate registry state:
+   ```bash
+   python manage.py validate
+   ```
 
-## 🎨 Visualizing the Ecosystem
-Visit the [KPM Web Interface](https://project-korlang.github.io/KPM/) to browse trending packages, view documentation, and check dependency graphs.
+3. Regenerate index:
+   ```bash
+   python manage.py index
+   ```
 
----
-*Built with ❤️ for the Korlang Community.*
+4. Serve the UI:
+   ```bash
+   python -m http.server
+   ```
+   Open `http://localhost:8000` in your browser.
 
+## License
+MIT
