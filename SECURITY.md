@@ -21,7 +21,7 @@ We are currently rolling out a package signing system. Authors are encouraged to
 If you discover a malicious package or a vulnerability in the registry infrastructure:
 
 1. **Do NOT** open a public issue.
-2. Email **security@korlang.org** immediately.
+2. Email **security@project-korlang.github.io** immediately.
 3. Include the package name, version, and a description of the threat.
 
 We aim to acknowledge reports within 24 hours.

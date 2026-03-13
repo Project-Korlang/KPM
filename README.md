@@ -2,7 +2,7 @@
 
 The official package registry for the Korlang programming language.
 
-[![Website](https://img.shields.io/badge/website-korlang.org-blue)](https://korlang.github.io/registry)
+[![Website](https://img.shields.io/badge/website-project-korlang.github.io-blue)](https://project-korlang.github.io/KPM)
 [![Packages](https://img.shields.io/badge/packages-dynamic-orange)](index.json)
 
 ## How it Works
@@ -19,7 +19,7 @@ kpm install <package-name>
 ```
 
 ### Browse Packages
-Visit the [Web UI](https://korlang.github.io/registry) to search and explore libraries.
+Visit the [Web UI](https://project-korlang.github.io/KPM) to search and explore libraries.
 
 ## For Package Authors
 Want to publish a library?
